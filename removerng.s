@@ -9,12 +9,33 @@ removerng:
     push    edi
 
     mov     eax, [ebp + 8]  ; address of start of chars array in eax
-    mov     ebx, [ebp + 8]
+    mov     esi, [ebp + 8]  ; address of start of chars array in esi
+    mov     bl, [ebp + 12]  ; lower limit char in bl
+    mov     cl, [ebp + 16]  ; upper limit char in cl
+remloop:
+    mov     dl, [eax]      ; current char pointed by eax in dl
+    cmp     dl, 0
+    jz      end
 
-    mov     cl, [eax]
-    add     cl, 1
-    mov     [eax], cl
+    cmp     dl, bl
+    jb      skip_char
+
+    cmp     dl, cl
+    ja      skip_char
+
+    mov     [esi], dl
+    inc     esi
+    inc     eax
+    jmp     remloop
+
+skip_char:
+    inc     eax
+    jmp     remloop
+
 end:
+    mov     [esi], byte 0
+    mov     eax, [ebp + 8]
+
     pop     edi
     pop     esi
     pop     ebx
